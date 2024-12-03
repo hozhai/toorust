@@ -1,0 +1,75 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "ignore": ["dist", "node_modules", "api", "target"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "all": true,
+      "correctness": {
+        "noNodejsModules": "off",
+        "noUndeclaredDependencies": "off",
+        "useImportExtensions": "error"
+      },
+      "performance": {
+        "noBarrelFile": "off",
+        "noReExportAll": "off"
+      },
+      "style": {
+        "useEnumInitializers": "off",
+        "noDefaultExport": "off",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "filenameCases": [
+              "export",
+              "PascalCase",
+              "camelCase",
+              "snake_case"
+            ],
+            "strictCase": false
+          }
+        },
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "conventions": [
+              {
+                "formats": ["CONSTANT_CASE"],
+                "selector": {
+                  "kind": "enumMember"
+                }
+              },
+              {
+                "formats": ["camelCase", "CONSTANT_CASE", "snake_case"],
+                "selector": {
+                  "kind": "objectLiteralProperty"
+                }
+              }
+            ],
+            "enumMemberCase": "CONSTANT_CASE",
+            "strictCase": false
+          }
+        }
+      },
+      "suspicious": {
+        "noAssignInExpressions": "off",
+        "noShadowRestrictedNames": "off",
+        "noThenProperty": "off",
+        "noReactSpecificProps": "off",
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "organizeImports": {
+    "enabled": true
+  }
+}
