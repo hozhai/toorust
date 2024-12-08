@@ -8,12 +8,15 @@
     "node": ">=22.11.0",
     "pnpm": ">=9.13.0"
   },
-  "packageManager": "pnpm@9.13.0+",
+  "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab",
   "scripts": {
-    "dev": "pnpx vercel develop",
+    "dev": "pnpm build:wasm && pnpm build:api && pnpx vercel develop",
     "develop": "next dev",
-    "build": "next build",
     "start": "next start",
+    "build": "pnpm build:wasm && pnpm build:api && pnpm build:next",
+    "build:next": "next build",
+    "build:wasm": "for tool in add; do cd tools/$tool && wasm-pack build --target web --out-dir ../../pkg/$tool; cd ../../../; done",
+    "build:api": "cargo build -r",
     "biome": "pnpx @biomejs/biome check --write --config-path biome.json",
     "prepare": "husky"
   },
@@ -25,7 +28,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
-    "lucide-react": "^0.462.0",
+    "lucide-react": "^0.465.0",
+    "nanoid": "^5.0.9",
     "next": "15.0.3",
     "next-themes": "^0.4.3",
     "react": "18.3.1",

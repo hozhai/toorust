@@ -1,7 +1,7 @@
 "use client";
 
-import { Calculator, Calendar, Smile } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type ComponentType, memo, Suspense, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
 import {
   CommandDialog,
@@ -11,11 +11,18 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import type { SearchHTTPResponse, SearchAPIElem } from "@/api/api";
+import { nanoid } from "nanoid";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function SearchDialog() {
   const [open, setOpen] = useState<boolean>(false);
   const [isMac, setIsMac] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<SearchAPIElem[]>();
+
+  const router = useRouter();
 
   useEffect(() => {
     setIsMac(
@@ -36,15 +43,21 @@ export function SearchDialog() {
   }, []);
 
   useEffect(() => {
-    const getData = setTimeout(async () => {
-      const req = await fetch(`api/echo?msg=${searchInput}`);
-      const res = await req.json();
+    if (!searchInput) {
+      return;
+    }
 
-      console.log(res);
-    }, 500);
+    const timeout = setTimeout(async () => {
+      const req = await fetch(`api/search?q=${searchInput}`);
+      const res: SearchHTTPResponse = await req.json();
 
-    return () => clearTimeout(getData);
-  }, [searchInput]);
+      if (res.query.results.toString() !== searchResults?.toString()) {
+        setSearchResults(res.query.results.slice(0, 7));
+      }
+    }, 100);
+
+    return () => clearInterval(timeout);
+  }, [searchInput, searchResults]);
 
   return (
     <>
@@ -60,6 +73,7 @@ export function SearchDialog() {
           onValueChange={(str) => {
             setSearchInput(str);
           }}
+          value={searchInput}
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
@@ -69,22 +83,29 @@ export function SearchDialog() {
                 value="calendar"
                 onSelect={(str: string) => alert(str)}
               >
-                <Calendar />
                 <span className="flex flex-col">
                   <span>Calendar</span>
-                  <span className="text-xs text-ellipsis">
-                    A calendar tool.
-                  </span>
+                  <span className="text-xs text-ellipsis">A calendar tool</span>
                 </span>
               </CommandItem>
-              <CommandItem>
-                <Smile />
-                <span>Search Emoji</span>
-              </CommandItem>
-              <CommandItem>
-                <Calculator />
-                <span>Calculator</span>
-              </CommandItem>
+            </CommandGroup>
+          )}
+          {searchResults && (
+            <CommandGroup heading={searchInput ? "Results" : "Recent"}>
+              {searchResults.map((v: SearchAPIElem) => (
+                <CommandItem
+                  className="cursor-pointer transition-colors duration-300"
+                  onSelect={() => router.push(`/${v.id}`)}
+                  key={nanoid()}
+                >
+                  <span className="flex flex-col">
+                    <span>{v.name}</span>
+                    <span className="text-xs text-ellipsis">
+                      {v.description}
+                    </span>
+                  </span>
+                </CommandItem>
+              ))}
             </CommandGroup>
           )}
         </CommandList>

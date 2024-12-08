@@ -9,7 +9,7 @@ export default function Home() {
           Toorust
         </h1>
         <h2 className="text-3xl text-gray-700 dark:text-amber-50 font-sans">
-          --&gt; the point.
+          tools that r --&gt; &bull;
         </h2>
         <div className="flex justify-center items-center space-x-3 mt-4">
           <SearchDialog />
